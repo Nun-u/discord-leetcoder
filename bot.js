@@ -279,7 +279,7 @@ client.on("messageCreate", (msg) => {
     }
   } else {
     msg.channel.send(
-      "Invalid command! Feel free to do !help for a list of the commands."
+      "I am a sentient AI bot programmed to inform Hussain that he will not get away with this."
     );
   }
 });
