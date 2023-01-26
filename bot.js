@@ -107,7 +107,7 @@ client
       `Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`
     );
     setInterval(() => {
-      // doQotd(freeProblems);
+      //doQotd(freeProblems);
     }, 15000);
     client.user.setPresence({
       status: "online",
@@ -334,7 +334,15 @@ function doQotd(data) {
         iconURL: "https://leetcode.com/static/images/LeetCode_logo_rvs.png",
       })
       .setURL(problemUrl);
-    client.channels.cache.get(qotdChannel).send({ embeds: [qotdEmbed] });
+    client.channels.cache
+      .get(qotdChannel)
+      .send({ embeds: [qotdEmbed] })
+      .then((sentMessage) => {
+        sentMessage.startThread({
+          name: "Discussion & Solutions Go Here!",
+          type: "GUILD_PUBLIC_THREAD",
+        });
+      });
   });
 }
 
