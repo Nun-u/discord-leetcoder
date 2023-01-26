@@ -277,10 +277,6 @@ client.on("messageCreate", (msg) => {
     } else {
       msg.channel.send("Format is ?course [course id]. Ex. ?course comp1511");
     }
-  } else {
-    msg.channel.send(
-      "I am a sentient AI bot programmed to inform Hussain that he will not get away with this."
-    );
   }
 });
 
