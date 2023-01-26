@@ -1,3 +1,4 @@
+// IMPORT OF DISCORD.JS
 const {
   Client,
   GatewayIntentBits,
@@ -5,6 +6,7 @@ const {
   EmbedBuilder,
 } = require("discord.js");
 
+// IMPORT OF ENVIRONMENTAL VARIABLES + MISC MODULES
 require("dotenv").config();
 const token = process.env.token;
 const prefix = process.env.prefix;
@@ -12,10 +14,8 @@ const problemUrlBase = process.env.problemUrlBase;
 const ltApiUrl = process.env.ltApiUrl;
 const qotdChannel = process.env.qotdChannel;
 const unswApiUrl = process.env.unswApiUrl;
-
-const puppeteer = require("puppeteer");
 const cheerio = require("cheerio");
-
+const he = require("he");
 const axios = require("axios");
 const client = new Client({
   intents: [
@@ -28,6 +28,7 @@ const client = new Client({
   partials: [Partials.Channel],
 });
 
+// DECLARATION OF DATASTORES
 const allProblems = [];
 const freeProblems = [];
 const paidProblems = [];
@@ -154,19 +155,23 @@ client
   });
 
 const fetchFormattedDesc = async (problemUrl) => {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto(problemUrl);
-  const html = await page.content();
-  const $ = cheerio.load(html);
-  const rawString = $("._1l1MA").text();
-  const cutPoint = rawString.indexOf("Example 1");
-  const formattedDesc = rawString
-    .substring(0, cutPoint)
-    .trim()
-    .replace(/\n{3,}/g, "\n");
-  await browser.close();
-  return formattedDesc;
+  try {
+    const response = await axios.get(problemUrl);
+    const html = response.data;
+    const startIndex =
+      html.indexOf('<meta name="description" content="') +
+      '<meta name="description" content="'.length;
+    const endIndex = html.indexOf("Example 1:");
+    let finalString = html.substring(startIndex, endIndex);
+    finalString = he.decode(finalString);
+    finalString = finalString.replace(/(\n){3,}/g, "\n\n");
+    finalString = finalString.substring(finalString.indexOf("-") + 1);
+    if (finalString.startsWith('width"/><meta charSet="utf-8"/>'))
+      return "Error loading the description of the problem.\n\n**Click on the title** for all the juicy info.";
+    return finalString;
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 /**
