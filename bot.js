@@ -5,6 +5,7 @@ const {
   EmbedBuilder,
 } = require("discord.js");
 
+require("dotenv").config();
 const token = process.env.token;
 const prefix = process.env.prefix;
 const problemUrlBase = process.env.problemUrlBase;
